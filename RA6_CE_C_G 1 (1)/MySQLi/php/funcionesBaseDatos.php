@@ -75,7 +75,7 @@ function crearBBDD_MySQLi($basedatos){
 
 function crearTablas_MySQLi($basedatos){
  
-$conn = getConexionMySQLi_sin_bbdd();
+    $conn = getConexionMySQLi_sin_bbdd();
 
     // Seleccionamos la base de datos
     if (!$conn->select_db($basedatos)) {
@@ -359,7 +359,6 @@ function getLibrosTitulo_MySQLi()
 
     $conn->close();
     return $libros;
-    
 }
 
 
@@ -519,26 +518,28 @@ function getLibrosAnyo_MySQLi($libro)
 {
     $conn = getConexionMySQLi();
 
-    $sql = "SELECT anyo_edicion FROM libros WHERE titulo = ?";
+    $sql = "SELECT numero_ejemplar, titulo, anyo_edicion 
+            FROM libros 
+            WHERE titulo = ?";
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         $conn->close();
-        return null;
+        return [];
     }
 
-    $stmt->bind_param("s", $titulo);
+    $stmt->bind_param("s", $libro);
     $stmt->execute();
     $res = $stmt->get_result();
 
-    $anyo = null;
-    if ($fila = $res->fetch_assoc()) {
-        $anyo = (int)$fila['anyo_edicion'];
+    $librosanyos = [];
+    while ($fila = $res->fetch_assoc()) {
+        $librosanyos[] = $fila;
     }
 
     $stmt->close();
     $conn->close();
 
-    return $anyo;
+    return $librosanyos;
 }
 
 
