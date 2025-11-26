@@ -9,26 +9,36 @@ function getConexionPDO()
 
 function getConexionPDO_sin_bbdd()
 {
-    
+    try {
+        $dsn = 'mysql:host=' . HOST . ';charset=utf8mb4';
+        $opciones = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ];
+        return new PDO($dsn, USERNAME, PASSWORD, $opciones);
+    } catch (PDOException $e) {
+        die('Error de conexión PDO (sin bbdd): ' . $e->getMessage());
+    }  
 }
 
 function getConexionMySQLi()
 {
-    $conn = new mysqli(SERVIDOR, USUARIO, PASSWD, DATABASE);
+    $conn = new mysqli(HOST, USERNAME, PASSWORD, DATABASE);
     if ($conn->connect_error) {
         die('Error de conexión MySQLi: ' . $conn->connect_error);
     }
     $conn->set_charset('utf8mb4');
-    return $conn;    
+    return $conn;
 }
+
 function getConexionMySQLi_sin_bbdd()
 {
-    $conn = new mysqli(SERVIDOR, USUARIO, PASSWD);
+    $conn = new mysqli(HOST, USERNAME, PASSWORD);
     if ($conn->connect_error) {
         die('Error de conexión MySQLi (sin bbdd): ' . $conn->connect_error);
     }
     $conn->set_charset('utf8mb4');
-    return $conn;  
+    return $conn;    
 }
 
 
