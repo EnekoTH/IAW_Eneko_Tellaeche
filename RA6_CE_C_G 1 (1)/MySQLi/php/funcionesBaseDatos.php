@@ -47,27 +47,29 @@ function crearBBDD_MySQLi($basedatos){
     $conn = getConexionMySQLi_sin_bbdd();
 
     // ¿Existe ya la base de datos?
-    $sqlExiste = "SHOW DATABASES LIKE ?";
-    $stmt = $conn->prepare($sqlExiste);
-    $stmt->bind_param("s", $basedatos);
-    $stmt->execute();
-    $stmt->store_result();
+    $basedatos_esc = $conn->real_escape_string($basedatos);
+    $sqlExiste = "SELECT SCHEMA_NAME 
+                  FROM INFORMATION_SCHEMA.SCHEMATA 
+                  WHERE SCHEMA_NAME = '$basedatos_esc'";
+    $res = $conn->query($sqlExiste);
 
-    if ($stmt->num_rows > 0) {
+    if ($res && $res->num_rows > 0) {
         // Ya existe
-        $stmt->close();
+        $res->free();
         $conn->close();
         return 1;
     }
 
-    $stmt->close();
+    if ($res) {
+        $res->free();
+    }
 
     // Crear la base de datos
     $sqlCrear = "CREATE DATABASE `$basedatos` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
     $ok = $conn->query($sqlCrear);
 
     $conn->close();
-    return $ok ? 0 : -1;   
+    return $ok ? 0 : -1;    
     
 }
 
