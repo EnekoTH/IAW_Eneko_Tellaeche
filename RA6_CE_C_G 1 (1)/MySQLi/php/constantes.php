@@ -3,4 +3,4 @@
 define("HOST", "localhost");
 define("USERNAME", "root");
 define("PASSWORD", "");
-define("DATABASE", "libros2");
+define("DATABASE", "libros4");
